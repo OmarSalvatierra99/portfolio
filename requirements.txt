@@ -1,0 +1,16 @@
+# ==============================
+# Portfolio Web App Requirements
+# ==============================
+
+Flask==3.0.3
+Werkzeug==3.0.4
+Jinja2==3.1.4
+itsdangerous==2.2.0
+MarkupSafe==2.1.5
+
+# For file upload and serving
+gunicorn==22.0.0
+
+# Optional utilities
+python-dotenv==1.0.1
+

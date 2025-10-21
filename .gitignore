@@ -1,0 +1,71 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.env.bak/
+.venv/
+
+# Flask cache and instance data
+instance/
+*.db
+*.sqlite3
+*.sqlite
+*.log
+*.pid
+*.swp
+
+# Environment variables
+*.env
+.env.*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# Backup files
+*~
+*.bak
+
+# Temporary uploads
+/tmp/
+temp/
+*.tmp
+
+# CV or private files
+static/cv/resume.pdf
+
+# Gunicorn / system logs
+gunicorn.log
+*.log.*
+logs/
+
+# Nginx temp
+*.sock
+*.pid
+
+# Cache or compiled static assets
+static/css/*.map
+static/js/*.map
+
+# Exclude internal Git repos (each project has its own .git)
+projects/
+*/.git/
+*/.gitignore
+*/.gitattributes
+

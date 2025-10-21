@@ -1,0 +1,135 @@
+/* ==============================
+   Global Styles
+   ============================== */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    border-top: 1px solid #dee2e6;
+}
+
+/* ==============================
+   Navbar
+   ============================== */
+.navbar-brand i {
+    color: #0d6efd;
+    margin-right: 6px;
+}
+
+.navbar-dark .nav-link.active,
+.navbar-dark .nav-link:hover {
+    color: #0d6efd !important;
+}
+
+/* ==============================
+   Profile Section
+   ============================== */
+.profile-photo {
+    width: 220px;
+    height: 220px;
+    object-fit: cover;
+    border: 4px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ==============================
+   Cards
+   ============================== */
+.card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Gradient header (used by index.html and projects.html) */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+}
+
+/* ==============================
+   Badges and Buttons
+   ============================== */
+.badge {
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.45em 0.75em;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* ==============================
+   Projects Cards
+   ============================== */
+.project-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+}
+
+/* ==============================
+   Footer
+   ============================== */
+footer a {
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+}
+
+footer a:hover {
+    opacity: 1;
+}
+
+footer small {
+    color: #aaa;
+}
+
+/* ==============================
+   Responsive
+   ============================== */
+@media (max-width: 767px) {
+    .profile-photo {
+        width: 160px;
+        height: 160px;
+    }
+
+    .display-5 {
+        font-size: 1.8rem;
+    }
+
+    .lead {
+        font-size: 1.05rem;
+    }
+}
+

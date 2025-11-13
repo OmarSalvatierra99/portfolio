@@ -8,7 +8,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List
 from flask import (
-    Flask, render_template, jsonify, send_file, send_from_directory, abort
+    Flask, render_template, jsonify, send_file, send_from_directory, abort, request
 )
 from werkzeug.utils import secure_filename
 from markdown import markdown
@@ -30,7 +30,7 @@ _projects_cache_time: float = 0.0
 
 
 def _projects_signature() -> str:
-    """Generate a signature to detect file modifications."""
+    """Generate a hash signature to detect file modifications in project directories."""
     parts: List[str] = []
     for folder in sorted(p for p in PROJECTS_DIR.iterdir() if p.is_dir()):
         if folder.name in {".git", "venv", "static", "templates", "__pycache__"}:
@@ -53,28 +53,27 @@ def _projects_signature() -> str:
 # Project parsing logic
 # ---------------------------------------------------------
 def _parse_readme(path: Path) -> Dict[str, str]:
-    """Parse README.md for name, description, live URL, and HTML content."""
+    """Parse README.md for title, description, live URL, and rendered HTML."""
     text = path.read_text(encoding="utf-8")
     html = markdown(text)
     lines = [l.strip() for l in text.splitlines() if l.strip()]
     data = {"name": "", "description": "", "live_url": "", "full_description": html}
 
-    # Title from first heading
+    # Extract title from first markdown heading
     for line in lines:
         if line.startswith("#"):
             data["name"] = line.lstrip("#").strip()
             break
 
-    # Description: first normal paragraph
+    # Extract first paragraph as description
     for line in lines:
-        if line.startswith("#") or line.startswith("🔗") or line.startswith("**"):
+        if line.startswith(("#", "🔗", "**")):
             continue
         if len(line.split()) > 3:
-            # Render this paragraph as HTML to preserve markdown formatting
             data["description"] = markdown(line)
             break
 
-    # Live link pattern: 🔗 **Live:** [text](url)
+    # Detect live URL pattern: 🔗 **Live:** [text](url)
     m = re.search(r"🔗\s*\*\*Live:\*\*\s*\[[^\]]*\]\(([^\)]+)\)", text)
     if m:
         data["live_url"] = m.group(1).strip()
@@ -83,7 +82,7 @@ def _parse_readme(path: Path) -> Dict[str, str]:
 
 
 def load_projects() -> List[Dict[str, Any]]:
-    """Load all projects dynamically from ~/portfolio/projects."""
+    """Load and cache all projects from ~/portfolio/projects."""
     global _projects_cache, _projects_cache_sig, _projects_cache_time
     now = time.time()
     sig = _projects_signature()
@@ -111,8 +110,8 @@ def load_projects() -> List[Dict[str, Any]]:
             meta = _parse_readme(readme_path) if readme_path.exists() else {}
             name = meta.get("name") or folder.name.replace("-", " ").title()
             description = meta.get("description") or markdown("No description available.")
-            live_url = meta.get("live_url") or ""
-            full_description = meta.get("full_description") or ""
+            live_url = meta.get("live_url", "")
+            full_description = meta.get("full_description", "")
 
             # Extract GitHub repo URL from .git/config
             repo_url = ""
@@ -127,13 +126,13 @@ def load_projects() -> List[Dict[str, Any]]:
                         elif raw.startswith("https://github.com/"):
                             repo_url = raw.removesuffix(".git")
                 except Exception:
-                    repo_url = ""
+                    pass
 
             projects.append(
                 {
                     "name": name,
                     "slug": folder.name,
-                    "description": description,  # already rendered as HTML
+                    "description": description,
                     "full_description": full_description,
                     "repo_url": repo_url,
                     "live_url": live_url,
@@ -155,13 +154,12 @@ def load_projects() -> List[Dict[str, Any]]:
 # Portfolio Data (Profile + Resume)
 # ---------------------------------------------------------
 portfolio_data: Dict[str, Any] = {
-    "name": "Omar Gabriel Salvatierra Garcia",
-    "title": "Full Stack Developer | Python & React Specialist",
-    "headline": "Building scalable, automated, and maintainable systems.",
+    "name": "Omar Gabriel Salvatierra García",
+    "title": "Python Backend Developer | Linux Specialist",
+    "headline": "Building scalable, automated, and maintainable backend systems.",
     "about": (
-        "Full Stack Developer with strong expertise in Python, JavaScript, and Excel automation. "
-        "Experienced in developing enterprise-level web applications and backend systems "
-        "for institutional and private sector environments."
+        "Backend developer with strong expertise in Python, Linux, and process automation. "
+        "Experienced in developing reliable web APIs and data processing tools for enterprise and public-sector environments."
     ),
     "photo_url": "/static/img/profile.jpg",
     "socials": {
@@ -171,33 +169,35 @@ portfolio_data: Dict[str, Any] = {
     },
     "technical_skills": [
         "Python",
-        "JavaScript",
-        "Excel (Advanced)",
+        "Flask / FastAPI",
+        "Linux Administration",
+        "Docker / Kubernetes",
+        "CI/CD (GitHub Actions)",
     ],
     "experience": [
         {
             "title": "Python Developer — OFS (Audit and Fiscal Oversight)",
             "period": "Sep 2024 – Present",
             "description": (
-                "Developed automation pipelines in Python for public account preparation, "
-                "reducing error rates and cycle times. Designed scalable XML processing tools "
-                "and built AI-assisted models to streamline audit workflows."
+                "Developed automation pipelines in Python for public account processing, "
+                "reducing errors and processing time. Designed scalable XML validation tools "
+                "and integrated AI-assisted models to improve audit workflows."
             ),
         },
         {
-            "title": "Full Stack Developer — Tornillera Central S.A. de C.V.",
+            "title": "Backend Developer — Tornillera Central S.A. de C.V.",
             "period": "Apr 2023 – Sep 2024",
             "description": (
-                "Developed a complete sales management system with inventory tracking, "
-                "QR scanning, and role-based access control using Django and React."
+                "Built a complete sales and inventory management system with role-based access, "
+                "QR scanning, and REST APIs using Django and React."
             ),
         },
         {
-            "title": "Python Developer — Comerzializador Plugar S.A. de C.V.",
+            "title": "Python Developer — Comercializadora Plugar S.A. de C.V.",
             "period": "Jan 2018 – May 2022",
             "description": (
-                "Built custom automation software for enterprise clients integrating "
-                "data processing and reporting systems using Python and Excel."
+                "Developed automation and reporting tools integrating data workflows "
+                "with Excel and Python for business clients."
             ),
         },
     ],
@@ -210,7 +210,7 @@ portfolio_data: Dict[str, Any] = {
     "languages": [
         "Spanish — Native",
         "English — Advanced",
-        "French — Advanced",
+        "French — Intermediate",
     ],
     "resume": {"url": "/resume"},
 }
@@ -286,7 +286,6 @@ def resume_download():
 
 @app.post("/resume/upload")
 def resume_upload():
-    from flask import request
     token = request.headers.get("X-RESUME-TOKEN") or request.args.get("token")
     if not RESUME_UPLOAD_TOKEN or token != RESUME_UPLOAD_TOKEN:
         return jsonify({"error": "Unauthorized"}), 401
@@ -298,6 +297,7 @@ def resume_upload():
     ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
     if ext not in ALLOWED_EXTENSIONS:
         return jsonify({"error": "Only PDF is allowed"}), 400
+
     tmp_name = f"._tmp_{int(datetime.utcnow().timestamp())}.pdf"
     tmp_path = CV_DIR / secure_filename(tmp_name)
     file.save(tmp_path)

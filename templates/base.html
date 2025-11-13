@@ -3,29 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ data.name }} — Portfolio</title>
+    <title>{{ data.name }} — Python Developer Portfolio</title>
     <meta name="description" content="{{ data.headline }}">
+    <meta name="keywords" content="Python Developer, Backend Engineer, Flask, Linux, Automation">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+
+    <!-- Theme Detection Script (runs before page renders) -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <nav class="navbar navbar-expand-lg shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fa-solid fa-terminal"></i> {{ data.name }}
+            <a class="navbar-brand" href="/">
+                <i class="fa-brands fa-python"></i>
+                <span>{{ data.name.split()[0] }}</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/projects">Projects</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ data.resume.url }}" target="_blank">Resume</a></li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fa-solid fa-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/projects">
+                            <i class="fa-solid fa-code"></i> Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ data.resume.url }}" target="_blank">
+                            <i class="fa-solid fa-file-pdf"></i> Resume
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="theme-toggle nav-link" id="themeToggle" aria-label="Toggle theme" type="button">
+                            <i class="fa-solid fa-moon" id="themeIcon"></i>
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -37,11 +75,11 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light text-center py-4 mt-auto border-top border-secondary">
+    <footer class="text-center py-4 mt-auto">
         <div class="container">
-            <div class="mb-2">
+            <div class="mb-3">
                 {% for key, link in data.socials.items() %}
-                <a href="{{ link }}" target="_blank" class="text-light mx-2 fs-5">
+                <a href="{{ link }}" target="_blank" class="mx-2 fs-4" aria-label="{{ key }}">
                     {% if key == 'GitHub' %}
                     <i class="fab fa-github"></i>
                     {% elif key == 'LinkedIn' %}
@@ -54,13 +92,46 @@
                 </a>
                 {% endfor %}
             </div>
-            <small class="text-secondary">
-                © {{ year }} {{ data.name }} — Built with Flask & Bootstrap 5
+            <small>
+                © {{ year }} {{ data.name }} — Built with Python & Flask
             </small>
         </div>
     </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Theme Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const html = document.documentElement;
+
+            // Initialize theme icon
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.className = 'fa-solid fa-sun';
+                } else {
+                    themeIcon.className = 'fa-solid fa-moon';
+                }
+            }
+
+            // Set initial icon
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            updateThemeIcon(currentTheme);
+
+            // Toggle theme
+            themeToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+        });
+    </script>
 </body>
 </html>
-

@@ -14,3 +14,6 @@ gunicorn==22.0.0
 # Optional utilities
 python-dotenv==1.0.1
 
+# Markdown rendering
+markdown==3.7
+

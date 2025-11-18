@@ -2,45 +2,47 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section fade-in-up">
+<section class="hero-section">
     <div class="row align-items-center">
-        <div class="col-lg-8">
+        <div class="col-lg-8 slide-in-left">
+            <div class="mb-3">
+                <span class="python-badge">
+                    <i class="fa-brands fa-python"></i> Python Developer
+                </span>
+            </div>
             <h1 class="hero-title">{{ data.name }}</h1>
             <h2 class="hero-subtitle">
-                <span class="python-badge">
-                    <i class="fa-brands fa-python"></i> Python Expert
-                </span>
-                Backend Developer | Linux Specialist
+                <span class="typing-text" id="typingText"></span>
             </h2>
             <p class="hero-description">
                 {{ data.about }}
             </p>
-            <div class="mt-4 d-flex flex-wrap gap-3">
-                <a href="/projects" class="btn btn-light btn-lg">
+            <div class="mt-5 d-flex flex-wrap gap-3">
+                <a href="/projects" class="btn btn-primary btn-lg">
                     <i class="fa-solid fa-code"></i> View Projects
                 </a>
-                <a href="{{ data.resume.url }}" class="btn btn-outline-light btn-lg" target="_blank">
-                    <i class="fa-solid fa-file-pdf"></i> Download Resume
+                <a href="{{ data.socials['GitHub'] }}" class="btn btn-outline-primary btn-lg" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
                 </a>
-                <a href="{{ data.socials['GitHub'] }}" class="btn btn-outline-light btn-lg" target="_blank">
-                    <i class="fab fa-github"></i> GitHub Profile
+                <a href="{{ data.resume.url }}" class="btn btn-outline-secondary btn-lg" target="_blank">
+                    <i class="fa-solid fa-file-pdf"></i> Resume
                 </a>
             </div>
         </div>
-        <div class="col-lg-4 text-center mt-4 mt-lg-0">
+        <div class="col-lg-4 text-center mt-5 mt-lg-0 slide-in-right">
             <img src="{{ data.photo_url }}" alt="Profile photo" class="img-fluid rounded-circle profile-photo">
         </div>
     </div>
 </section>
 
 <!-- Technical Skills -->
-<section class="mb-5">
-    <div class="card shadow-lg">
+<section class="mb-5 fade-in">
+    <div class="card">
         <div class="card-header">
             <h4><i class="fa-solid fa-code"></i> Technical Expertise</h4>
         </div>
         <div class="card-body">
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap gap-3">
                 {% for skill in data.technical_skills %}
                 <span class="badge skill-badge">
                     {% if 'Python' in skill %}
@@ -65,8 +67,8 @@
 </section>
 
 <!-- Experience Timeline -->
-<section class="mb-5">
-    <div class="card shadow-lg">
+<section class="mb-5 fade-in">
+    <div class="card">
         <div class="card-header">
             <h4><i class="fa-solid fa-briefcase"></i> Professional Experience</h4>
         </div>
@@ -88,19 +90,19 @@
 <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0">
-            <i class="fa-solid fa-folder-open text-gradient-python"></i>
+            <i class="fa-solid fa-folder-open" style="color: var(--accent-primary);"></i>
             Featured Projects
         </h3>
         <a href="/projects" class="btn btn-outline-primary">
-            View All Projects <i class="fa-solid fa-arrow-right ms-2"></i>
+            View All <i class="fa-solid fa-arrow-right ms-2"></i>
         </a>
     </div>
 
     {% if projects %}
     <div class="row g-4">
         {% for project in projects[:3] %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card project-card shadow-lg h-100">
+        <div class="col-md-6 col-lg-4 fade-in">
+            <div class="card project-card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">
                         <a href="{{ url_for('project_detail', slug=project.slug) }}" class="text-decoration-none">
@@ -118,11 +120,11 @@
                         {% endif %}
                         {% if project.live_url %}
                         <a href="{{ project.live_url }}" class="btn btn-sm btn-primary" target="_blank">
-                            <i class="fa-solid fa-globe"></i> Live Demo
+                            <i class="fa-solid fa-globe"></i> Demo
                         </a>
                         {% endif %}
                         <a href="{{ url_for('project_detail', slug=project.slug) }}" class="btn btn-sm btn-outline-primary">
-                            <i class="fa-solid fa-info-circle"></i> Details
+                            Details <i class="fa-solid fa-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -132,15 +134,15 @@
     </div>
     {% else %}
     <div class="alert alert-info text-center">
-        <i class="fa-regular fa-folder-open"></i> Projects loading...
+        <i class="fa-regular fa-folder-open"></i> No projects available yet.
     </div>
     {% endif %}
 </section>
 
 <!-- Education & Languages -->
-<div class="row g-4">
+<div class="row g-4 fade-in">
     <div class="col-lg-7">
-        <div class="card shadow-lg h-100">
+        <div class="card h-100">
             <div class="card-header">
                 <h4><i class="fa-solid fa-graduation-cap"></i> Education</h4>
             </div>
@@ -148,7 +150,7 @@
                 <ul class="list-unstyled mb-0">
                     {% for edu in data.education %}
                     <li class="mb-3">
-                        <i class="fa-solid fa-check-circle text-gradient-python"></i>
+                        <i class="fa-solid fa-check-circle" style="color: var(--accent-primary);"></i>
                         <strong>{{ edu }}</strong>
                     </li>
                     {% endfor %}
@@ -158,7 +160,7 @@
     </div>
 
     <div class="col-lg-5">
-        <div class="card shadow-lg h-100">
+        <div class="card h-100">
             <div class="card-header">
                 <h4><i class="fa-solid fa-language"></i> Languages</h4>
             </div>
@@ -166,7 +168,7 @@
                 <ul class="list-unstyled mb-0">
                     {% for lang in data.languages %}
                     <li class="mb-3">
-                        <i class="fa-solid fa-globe text-gradient-primary"></i>
+                        <i class="fa-solid fa-globe" style="color: var(--accent-primary);"></i>
                         <strong>{{ lang }}</strong>
                     </li>
                     {% endfor %}
@@ -177,7 +179,7 @@
 </div>
 
 <!-- Call to Action -->
-<section class="text-center mt-5 py-5">
+<section class="text-center mt-5 py-5 fade-in">
     <h3 class="mb-4">Let's Build Something Amazing Together</h3>
     <div class="d-flex justify-content-center gap-3 flex-wrap">
         <a href="mailto:{{ data.socials['Email'].replace('mailto:', '') }}" class="btn btn-primary btn-lg">
@@ -188,5 +190,60 @@
         </a>
     </div>
 </section>
+
+<!-- Typing Effect Script -->
+<script>
+    // Typing effect configuration
+    const texts = [
+        'Backend Developer',
+        'Python Expert',
+        'Linux Specialist',
+        'DevOps Engineer',
+        'Problem Solver'
+    ];
+
+    let textIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = 100;
+
+    function typeText() {
+        const currentText = texts[textIndex];
+        const typingElement = document.getElementById('typingText');
+
+        if (!isDeleting) {
+            // Typing
+            typingElement.textContent = currentText.substring(0, charIndex + 1);
+            charIndex++;
+
+            if (charIndex === currentText.length) {
+                // Pause at end
+                isDeleting = true;
+                typingSpeed = 2000;
+            } else {
+                typingSpeed = 100;
+            }
+        } else {
+            // Deleting
+            typingElement.textContent = currentText.substring(0, charIndex - 1);
+            charIndex--;
+
+            if (charIndex === 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % texts.length;
+                typingSpeed = 500;
+            } else {
+                typingSpeed = 50;
+            }
+        }
+
+        setTimeout(typeText, typingSpeed);
+    }
+
+    // Start typing effect when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(typeText, 1000);
+    });
+</script>
 
 {% endblock %}

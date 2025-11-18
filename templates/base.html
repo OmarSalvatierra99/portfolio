@@ -75,11 +75,11 @@
     </main>
 
     <!-- Footer -->
-    <footer class="text-center py-4 mt-auto">
+    <footer class="text-center py-5 mt-auto">
         <div class="container">
-            <div class="mb-3">
+            <div class="mb-4">
                 {% for key, link in data.socials.items() %}
-                <a href="{{ link }}" target="_blank" class="mx-2 fs-4" aria-label="{{ key }}">
+                <a href="{{ link }}" target="_blank" class="mx-3 fs-4" aria-label="{{ key }}" style="transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
                     {% if key == 'GitHub' %}
                     <i class="fab fa-github"></i>
                     {% elif key == 'LinkedIn' %}
@@ -92,8 +92,8 @@
                 </a>
                 {% endfor %}
             </div>
-            <small>
-                © {{ year }} {{ data.name }} — Built with Python & Flask
+            <small style="color: var(--text-muted); font-size: 0.875rem;">
+                © {{ year }} {{ data.name }} — Built with <span style="color: var(--accent-primary);">♥</span> using Python & Flask
             </small>
         </div>
     </footer>

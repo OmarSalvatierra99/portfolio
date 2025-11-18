@@ -4,10 +4,10 @@
 <!-- Page Header -->
 <div class="text-center mb-5 fade-in-up">
     <h1 class="display-4 fw-bold mb-3">
-        <i class="fa-solid fa-folder-open text-gradient-python"></i>
+        <i class="fa-solid fa-folder-open" style="color: var(--accent-primary);"></i>
         Project Portfolio
     </h1>
-    <p class="lead text-muted">
+    <p class="lead text-muted" style="max-width: 700px; margin: 0 auto;">
         A collection of Python projects showcasing backend development, automation, and system integration
     </p>
 </div>
@@ -16,8 +16,8 @@
 <!-- Projects Grid -->
 <div class="row g-4 mb-5">
     {% for project in projects %}
-    <div class="col-md-6 col-lg-4">
-        <div class="card project-card shadow-lg h-100">
+    <div class="col-md-6 col-lg-4 fade-in">
+        <div class="card project-card h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex align-items-start justify-content-between mb-3">
                     <h5 class="card-title mb-0 flex-grow-1">
@@ -25,7 +25,7 @@
                             {{ project.name }}
                         </a>
                     </h5>
-                    <i class="fa-brands fa-python text-gradient-python fs-4 ms-2"></i>
+                    <i class="fa-brands fa-python fs-4 ms-2" style="color: var(--accent-primary);"></i>
                 </div>
 
                 <div class="card-text project-description flex-grow-1 mb-3">
@@ -36,16 +36,16 @@
                     <div class="d-flex flex-wrap gap-2">
                         {% if project.repo_url %}
                         <a href="{{ project.repo_url }}" class="btn btn-sm btn-dark" target="_blank" title="View source code">
-                            <i class="fab fa-github"></i> Source
+                            <i class="fab fa-github"></i> Code
                         </a>
                         {% endif %}
                         {% if project.live_url %}
                         <a href="{{ project.live_url }}" class="btn btn-sm btn-primary" target="_blank" title="View live demo">
-                            <i class="fa-solid fa-globe"></i> Live
+                            <i class="fa-solid fa-globe"></i> Demo
                         </a>
                         {% endif %}
                         <a href="{{ url_for('project_detail', slug=project.slug) }}" class="btn btn-sm btn-outline-primary" title="View project details">
-                            <i class="fa-solid fa-arrow-right"></i> Details
+                            Details <i class="fa-solid fa-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -56,29 +56,29 @@
 </div>
 
 <!-- Project Stats -->
-<div class="row g-4 mb-5">
+<div class="row g-4 mb-5 fade-in">
     <div class="col-md-4">
-        <div class="card text-center shadow">
+        <div class="card text-center">
             <div class="card-body">
-                <i class="fa-solid fa-folder-open text-gradient-python fs-1 mb-3"></i>
+                <i class="fa-solid fa-folder-open fs-1 mb-3" style="color: var(--accent-primary);"></i>
                 <h3 class="fw-bold">{{ projects|length }}</h3>
                 <p class="text-muted mb-0">Total Projects</p>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-center shadow">
+        <div class="card text-center">
             <div class="card-body">
-                <i class="fa-brands fa-python text-gradient-python fs-1 mb-3"></i>
+                <i class="fa-brands fa-python fs-1 mb-3" style="color: var(--accent-primary);"></i>
                 <h3 class="fw-bold">Python</h3>
                 <p class="text-muted mb-0">Primary Language</p>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-center shadow">
+        <div class="card text-center">
             <div class="card-body">
-                <i class="fa-solid fa-code-branch text-gradient-primary fs-1 mb-3"></i>
+                <i class="fa-solid fa-code-branch fs-1 mb-3" style="color: var(--accent-primary);"></i>
                 <h3 class="fw-bold">Open Source</h3>
                 <p class="text-muted mb-0">Available on GitHub</p>
             </div>
@@ -88,10 +88,10 @@
 
 {% else %}
 <!-- Empty State -->
-<div class="text-center py-5">
-    <div class="card shadow-lg">
+<div class="text-center py-5 fade-in">
+    <div class="card">
         <div class="card-body py-5">
-            <i class="fa-regular fa-folder-open text-gradient-python" style="font-size: 5rem;"></i>
+            <i class="fa-regular fa-folder-open" style="font-size: 5rem; color: var(--accent-primary);"></i>
             <h3 class="mt-4 mb-3">No Projects Yet</h3>
             <p class="text-muted mb-4">
                 Projects will appear here once they are added to the <code>projects/</code> directory.
@@ -106,7 +106,7 @@
 {% endif %}
 
 <!-- Back to Home -->
-<div class="text-center mt-5">
+<div class="text-center mt-5 fade-in">
     <a href="/" class="btn btn-outline-primary btn-lg">
         <i class="fa-solid fa-arrow-left"></i> Back to Home
     </a>

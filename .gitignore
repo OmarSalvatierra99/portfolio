@@ -1,3 +1,10 @@
+# AI agent files
+.aider*
+.cursor/
+.cursorrules
+GEMINI.md
+CLAUDE.md
+AGENTS.md
 # Byte-compiled / cache
 __pycache__/
 *.py[cod]

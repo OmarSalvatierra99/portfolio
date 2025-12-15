@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(python3:*)",
+      "Bash(cat:*)",
+      "Bash(curl:*)",
+      "Bash(nginx -T:*)",
+      "Bash(systemctl status:*)",
+      "Bash(sudo nginx:*)",
+      "Bash(sudo cat:*)",
+      "Bash(head:*)",
+      "Bash(sudo systemctl list-units:*)",
+      "Bash(done)",
+      "Bash(test:*)"
+    ]
+  }
+}

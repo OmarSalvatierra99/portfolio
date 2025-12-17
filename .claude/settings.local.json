@@ -15,7 +15,9 @@
       "Bash(test:*)",
       "Bash(mkdir:*)",
       "Bash(rm:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git add -A)",
+      "Bash(git commit -m \"checkpoint: before Phase 1 refactor (09-sifet-estatales, 04-lexnum)\")"
     ]
   }
 }

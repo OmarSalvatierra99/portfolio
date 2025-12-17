@@ -12,7 +12,10 @@
       "Bash(head:*)",
       "Bash(sudo systemctl list-units:*)",
       "Bash(done)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(ls:*)"
     ]
   }
 }

@@ -4,9 +4,11 @@ import os
 import time
 import re
 import configparser
+import logging
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List
+from logging.handlers import RotatingFileHandler
 from flask import (
     Flask, render_template, jsonify, send_file, send_from_directory, abort, request
 )
@@ -19,6 +21,23 @@ from markdown import markdown
 app = Flask(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 PROJECTS_DIR = BASE_DIR / "projects"
+
+# ---------------------------------------------------------
+# Logging configuration
+# ---------------------------------------------------------
+LOG_DIR = BASE_DIR / "log"
+LOG_DIR.mkdir(exist_ok=True)
+log_handler = RotatingFileHandler(
+    LOG_DIR / "portfolio.log",
+    maxBytes=10 * 1024 * 1024,  # 10MB
+    backupCount=5
+)
+log_handler.setFormatter(logging.Formatter(
+    '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+))
+app.logger.addHandler(log_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info("Portfolio application started")
 
 # ---------------------------------------------------------
 # Cache for project metadata

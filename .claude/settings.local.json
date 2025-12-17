@@ -17,7 +17,9 @@
       "Bash(rm:*)",
       "Bash(ls:*)",
       "Bash(git add -A)",
-      "Bash(git commit -m \"checkpoint: before Phase 1 refactor (09-sifet-estatales, 04-lexnum)\")"
+      "Bash(git commit -m \"checkpoint: before Phase 1 refactor (09-sifet-estatales, 04-lexnum)\")",
+      "Bash(tree -L 2 -I 'venv|__pycache__|*.pyc' .)",
+      "Bash(tree:*)"
     ]
   }
 }

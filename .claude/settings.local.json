@@ -19,7 +19,19 @@
       "Bash(git add -A)",
       "Bash(git commit -m \"checkpoint: before Phase 1 refactor (09-sifet-estatales, 04-lexnum)\")",
       "Bash(tree -L 2 -I 'venv|__pycache__|*.pyc' .)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(timeout 3 python:*)",
+      "Bash(echo:*)",
+      "Bash(if [ -d \"venv\" ])",
+      "Bash(then source venv/bin/activate)",
+      "Bash(else echo \"No venv found, creating one...\")",
+      "Bash(source venv/bin/activate)",
+      "Bash(pip install:*)",
+      "Bash(fi)",
+      "Bash(python:*)",
+      "Bash(else echo \"Main portfolio venv not found. Checking for system Flask...\")",
+      "Bash(git rev-parse:*)",
+      "Bash(git add:*)"
     ]
   }
 }

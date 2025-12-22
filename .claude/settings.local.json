@@ -31,7 +31,9 @@
       "Bash(python:*)",
       "Bash(else echo \"Main portfolio venv not found. Checking for system Flask...\")",
       "Bash(git rev-parse:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(wc:*)"
     ]
   }
 }

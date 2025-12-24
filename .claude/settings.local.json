@@ -34,7 +34,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(wc:*)",
-      "Bash(python3 main.py:*)"
+      "Bash(python3 main.py:*)",
+      "Bash(git init:*)"
     ]
   }
 }

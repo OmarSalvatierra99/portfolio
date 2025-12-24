@@ -33,7 +33,7 @@ PHP_FPM_SOCKET = Path("/run/php-fpm/php-fpm.sock")
 # Project definitions: (service_name, folder_name, port, domain)
 PROJECTS = [
     ("portfolio", "main", 5000, "omar-xyz.shop"),
-    ("cleanddoc", "01-cleandoc", 5001, "cleandoc.omar-xyz.shop"),
+    ("cleandoc", "01-cleandoc", 5001, "cleandoc.omar-xyz.shop"),
     ("pasanotas", "02-pasanotas", 5002, "pasanotas.omar-xyz.shop"),
     ("auditel", "03-auditel", 5003, "auditel.omar-xyz.shop"),
     ("lexnum", "04-lexnum", 5004, "lexnum.omar-xyz.shop"),

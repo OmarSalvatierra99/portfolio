@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-clean_pycache.py - Recursively delete Python cache files
+clean_pycache.py - Clean Python cache files and AI agent instruction files
 
-Removes all __pycache__ directories and compiled Python files (.pyc, .pyo)
-from the portfolio and all projects. Supports dry-run mode for safe previewing.
+Removes all __pycache__ directories, compiled Python files (.pyc, .pyo),
+and AI agent instruction files (AGENTS.md, CLAUDE.md, GEMINI.md) from the
+portfolio and all projects. Supports dry-run mode for safe previewing.
 """
 
 import argparse
@@ -53,16 +54,20 @@ def clean_python_cache(root_dir, dry_run=False, verbose=False):
     file_count = 0
 
     # Patterns to clean
-    patterns = [
+    cache_patterns = [
         "**/__pycache__",
         "**/*.pyc",
         "**/*.pyo",
         "**/*$py.class"
     ]
 
+    # AI agent instruction files to clean
+    ai_files = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]
+
     log(f"{'🔍 DRY RUN' if dry_run else '🧹 CLEANING'}: {root}", "B", colors)
 
-    for pattern in patterns:
+    # Clean Python cache files
+    for pattern in cache_patterns:
         for item in root.glob(pattern):
             try:
                 if item.is_dir():
@@ -88,17 +93,34 @@ def clean_python_cache(root_dir, dry_run=False, verbose=False):
             except Exception as e:
                 log(f"  ✗ Error processing {item}: {e}", "R", colors)
 
+    # Clean AI agent instruction files
+    for filename in ai_files:
+        ai_file = root / filename
+        if ai_file.exists() and ai_file.is_file():
+            try:
+                if dry_run:
+                    if verbose:
+                        log(f"  [Would delete file] {ai_file}", "Y", colors)
+                    file_count += 1
+                else:
+                    if verbose:
+                        log(f"  [Deleting file] {ai_file}", "Y", colors)
+                    ai_file.unlink()
+                    file_count += 1
+            except Exception as e:
+                log(f"  ✗ Error processing {ai_file}: {e}", "R", colors)
+
     return dir_count, file_count
 
 
 def main():
     """Main entry point for clean_pycache script."""
     parser = argparse.ArgumentParser(
-        description="Clean Python cache files from portfolio projects",
+        description="Clean Python cache files and AI agent instruction files from portfolio projects",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  %(prog)s                          # Clean all cache files
+  %(prog)s                          # Clean all cache and AI instruction files
   %(prog)s --dry-run                # Preview what would be deleted
   %(prog)s --verbose                # Show detailed output
   %(prog)s --path /custom/path      # Clean specific directory

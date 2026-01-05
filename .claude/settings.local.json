@@ -35,7 +35,11 @@
       "Bash(git commit:*)",
       "Bash(wc:*)",
       "Bash(python3 main.py:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(xargs -I {} bash -c 'echo \"\"=== {} ===\"\"; find {} -maxdepth 1 -type f -name \"\"app.py\"\" -o -name \"\"index.php\"\" -o -name \"\"*.java\"\" 2>/dev/null | head -1')",
+      "Bash(sudo sed:*)",
+      "Bash(source:*)",
+      "Bash(python -c:*)"
     ]
   }
 }

@@ -37,13 +37,28 @@ PROJECTS = [
     ("pasanotas", "02-pasanotas", 5002, "pasanotas.omar-xyz.shop"),
     ("auditel", "03-auditel", 5003, "auditel.omar-xyz.shop"),
     ("lexnum", "04-lexnum", 5004, "lexnum.omar-xyz.shop"),
-    ("obsidian-vps", "05-obsidian-vps", 5005, "obsidian-vps.omar-xyz.shop"),
-    ("sasp", "06-sasp", 5006, "sasp.omar-xyz.shop"),
-    ("sasp-php", "07-sasp-php", None, "sasp-php.omar-xyz.shop"),
-    ("sifet-estatales", "09-sifet-estatales", 5008, "sifet-estatales.omar-xyz.shop"),
-    ("siif", "10-siif", 5009, "siif.omar-xyz.shop"),
-    ("xml-php", "11-xml-php", None, "xml-php.omar-xyz.shop"),
+    ("sasp", "05-sasp", 5006, "sasp.omar-xyz.shop"),
+    ("sasp-php", "06-sasp-php", None, "sasp-php.omar-xyz.shop"),
+    ("sifet-estatales", "07-sifet-estatales", 5008, "sifet-estatales.omar-xyz.shop"),
+    ("siif", "08-siif", 5009, "siif.omar-xyz.shop"),
+    ("xml-php", "09-xml-php", None, "xml-php.omar-xyz.shop"),
 ]
+
+# Gunicorn worker configuration for special projects
+# Projects using Flask-SocketIO need async workers (eventlet/gevent)
+PROJECT_GUNICORN_CONFIG = {
+    "pasanotas": {
+        "worker_class": "eventlet",
+        "workers": 1,
+        "timeout": 0,
+    },
+    # Add more SocketIO projects here as needed
+    # "another-socketio-app": {
+    #     "worker_class": "eventlet",
+    #     "workers": 1,
+    #     "timeout": 0,
+    # },
+}
 
 
 # === UTILITIES ===
@@ -97,6 +112,27 @@ def detect_web_user():
     return "http"
 
 
+def detect_socketio_project(project_path):
+    """
+    Detect if a project uses Flask-SocketIO by checking requirements.txt.
+
+    Args:
+        project_path: Path to project directory
+
+    Returns:
+        bool: True if project uses Flask-SocketIO
+    """
+    requirements = project_path / "requirements.txt"
+    if not requirements.exists():
+        return False
+
+    try:
+        content = requirements.read_text().lower()
+        return "flask-socketio" in content or "flask_socketio" in content
+    except Exception:
+        return False
+
+
 # === FLASK ENVIRONMENT ===
 def setup_flask_environment(project_path, verbose=False):
     """
@@ -138,6 +174,12 @@ def setup_flask_environment(project_path, verbose=False):
     # Install base dependencies
     run_command([str(pip_path), "install", "-q", "flask", "gunicorn"])
 
+    # Check if this is a SocketIO project and install eventlet
+    if detect_socketio_project(project_path):
+        if verbose:
+            log(f"  Detected Flask-SocketIO, installing eventlet", "B", colors)
+        run_command([str(pip_path), "install", "-q", "eventlet"])
+
     # Install project requirements
     requirements = project_path / "requirements.txt"
     if requirements.exists():
@@ -161,7 +203,7 @@ def setup_flask_environment(project_path, verbose=False):
 
 
 # === SYSTEMD SERVICE ===
-def generate_systemd_service(name, project_path, port):
+def generate_systemd_service(name, project_path, port, gunicorn_config=None):
     """
     Create systemd service file for Flask app.
 
@@ -169,6 +211,8 @@ def generate_systemd_service(name, project_path, port):
         name: Service name
         project_path: Path to project
         port: Port number for gunicorn
+        gunicorn_config: Optional dict with gunicorn worker settings
+                        (worker_class, workers, timeout)
 
     Returns:
         Path: Path to service file
@@ -176,6 +220,25 @@ def generate_systemd_service(name, project_path, port):
     service_file = SYSTEMD_DIR / f"portfolio-{name}.service"
     venv_path = project_path / "venv"
     user = os.environ.get('SUDO_USER', 'gabo')
+
+    # Build gunicorn command
+    gunicorn_cmd = f"{venv_path}/bin/gunicorn --bind 127.0.0.1:{port}"
+
+    if gunicorn_config:
+        # Add custom worker configuration for SocketIO/async projects
+        worker_class = gunicorn_config.get("worker_class", "sync")
+        workers = gunicorn_config.get("workers", 4)
+        timeout = gunicorn_config.get("timeout", 30)
+
+        gunicorn_cmd += f" --worker-class {worker_class}"
+        gunicorn_cmd += f" --workers {workers}"
+        gunicorn_cmd += f" --timeout {timeout}"
+
+    # WSGI target: Always use app:app for gunicorn
+    # Note: Flask-SocketIO with eventlet workers requires app:app (Flask app object)
+    # The SocketIO object is not callable and will cause "Application object must be callable" error
+    wsgi_target = "app:app"
+    gunicorn_cmd += f" {wsgi_target}"
 
     service_content = f"""[Unit]
 Description={name} Flask Application
@@ -185,7 +248,7 @@ After=network.target
 User={user}
 WorkingDirectory={project_path}
 Environment="PATH={venv_path}/bin"
-ExecStart={venv_path}/bin/gunicorn --bind 127.0.0.1:{port} app:app
+ExecStart={gunicorn_cmd}
 Restart=always
 RestartSec=10
 
@@ -198,9 +261,19 @@ WantedBy=multi-user.target
 
 
 # === NGINX CONFIGURATION ===
-def generate_nginx_flask(domain, port, is_main=False):
+def generate_nginx_flask(domain, port, is_main=False, enable_websocket=False):
     """Generate NGINX config for Flask reverse proxy."""
     listen_directive = "listen 80 default_server;" if is_main else "listen 80;"
+
+    # WebSocket-specific headers for SocketIO projects
+    websocket_headers = ""
+    if enable_websocket:
+        websocket_headers = """
+        # WebSocket support for Flask-SocketIO
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_buffering off;"""
 
     return f"""server {{
     {listen_directive}
@@ -221,7 +294,7 @@ server {{
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto $scheme;{websocket_headers}
     }}
 }}
 """
@@ -418,11 +491,24 @@ def deploy_project(name, folder, port, domain, web_user, verbose=False, dry_run=
             if not setup_flask_environment(project_path, verbose):
                 return (name, "Flask env failed")
 
+            # Check for custom gunicorn config (for SocketIO projects)
+            gunicorn_config = PROJECT_GUNICORN_CONFIG.get(name)
+            enable_websocket = gunicorn_config is not None or detect_socketio_project(project_path)
+
+            if verbose and gunicorn_config:
+                log(f"  Using custom Gunicorn config: {gunicorn_config}", "Y", colors)
+            elif verbose and enable_websocket:
+                log(f"  Detected Flask-SocketIO, enabling WebSocket support", "Y", colors)
+
             # Generate systemd service
-            generate_systemd_service(name, project_path, port)
+            generate_systemd_service(name, project_path, port, gunicorn_config)
 
             # Generate NGINX config
-            nginx_config = generate_nginx_flask(domain, port, name == "portfolio")
+            nginx_config = generate_nginx_flask(
+                domain, port,
+                is_main=(name == "portfolio"),
+                enable_websocket=enable_websocket
+            )
             setup_nginx_site(name, nginx_config, verbose)
 
             # Restart service
